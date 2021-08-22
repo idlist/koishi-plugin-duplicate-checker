@@ -21,7 +21,7 @@ let MessageRecords = {}
 
 /**
  * @param {import('koishi').Session} session
- * @return {string}
+ * @returns {string}
  */
 const getName = (session) => {
   const nickname = session.author.nickname
@@ -33,7 +33,7 @@ const getName = (session) => {
 /**
  * @param {string} a String a
  * @param {string} b String b
- * @return {number}
+ * @returns {number}
  */
 const distanceRatio = (a, b) => {
   return levenshtein(a, b) / Math.max(a.length, b.length)
@@ -41,7 +41,7 @@ const distanceRatio = (a, b) => {
 
 /**
  * @param {import('./index').DurationObject} durationObject
- * @return {number}
+ * @returns {number}
  */
 const convertDurationObject = (durationObject) => {
   let duration = 0
@@ -79,7 +79,7 @@ const convertDurationObject = (durationObject) => {
 /**
  * @param {number} number
  * @param {number} digits
- * @returns {string}
+ * @returnss {string}
  */
 const paddingZero = (number, digits) => {
   let result = number.toString()
@@ -93,7 +93,7 @@ const paddingZero = (number, digits) => {
 
 /**
  * @param {number} timestamp
- * @return {string}
+ * @returns {string}
  */
 const formatTimestamp = (timestamp) => {
   let date = new Date(timestamp)

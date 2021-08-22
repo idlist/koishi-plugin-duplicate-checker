@@ -3,7 +3,7 @@ env:
   es6: true
   node: true
 extends: eslint:recommended
-global:
+globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
 parserOptions:
