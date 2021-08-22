@@ -1,0 +1,32 @@
+{
+  "name": "koishi-plugin-duplicate-checker",
+  "version": "0.1.0",
+  "description": "Check duplicated messages and images in group chats",
+  "author": "i'DLisT <me@idl.ist> (https://idl.ist/)",
+  "license": "MIT",
+  "keywords": [
+    "koishi",
+    "koishi.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idlist/koishi-plugin-duplicate-checker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/idlist/koishi-plugin-duplicate-checker/issues"
+  },
+  "homepage": "https://github.com/idlist/koishi-plugin-duplicate-checker#readme",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "probe-image-size": "^7.0.0",
+    "imghash": "^0.0.9",
+    "js-levelshtein": "^1.0.0"
+  },
+  "peerDependencies": {
+    "koishi-core": ">=3"
+  }
+}
