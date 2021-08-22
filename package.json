@@ -24,7 +24,7 @@
     "axios": "^0.21.0",
     "probe-image-size": "^7.0.0",
     "imghash": "^0.0.9",
-    "js-levelshtein": "^1.0.0"
+    "js-levenshtein": "^1.0.0"
   },
   "peerDependencies": {
     "koishi-core": ">=3"

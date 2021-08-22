@@ -116,6 +116,7 @@ module.exports.name = 'duplicate-checker'
  */
 module.exports.apply = (ctx, config) => {
   config = {
+    calloutSelf: false,
     minTextLength: 64,
     minWidth: 512,
     minHeight: 512,
@@ -197,7 +198,7 @@ module.exports.apply = (ctx, config) => {
         }
 
         duplicateFound = true
-        if (record.id == session.author.userId) continue
+        if (!config.calloutSelf && record.id == session.author.userId) continue
 
         record.count++
         record.expire = session.timestamp + expireDuration
@@ -237,8 +238,6 @@ module.exports.apply = (ctx, config) => {
         })
       }
     }
-
-    console.log(MessageRecords)
   }
 
   let cleanExpireTimer

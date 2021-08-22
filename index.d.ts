@@ -31,28 +31,41 @@ export interface DurationObject {
 
 export interface ConfigObject {
   /**
+   * Whether the bot should call out the original sender of the image.
+   * @default false
+   */
+  calloutSelf?: boolean
+  /**
    * Minimum length for a text message to be recorded.
+   * @default 64
    */
   minTextLength?: number
   /**
-   * Minimum width for an image to be recorded.
+   * Minimum width for an image to be recorded in px.
+   * Too small pictures are considered as stickers.
+   * @default 512
    */
   minWidth?: number
   /**
    * Minimum height for an image to be recorded.
+   * Too small pictures are considered as stickers.
+   * @default 512
    */
   minHeight?: number
   /**
    * Duration for a record to be cleaned from the record list.
+   * @default { days: 3 }
    */
   expireDuration?: DurationObject
   /**
    * Interval of cleaning the expired records.
+   * @default { minutes: 10 }
    */
   cleanExpireInterval?: DurationObject
   /**
    * Cooldown after the first callout so that a duplicated message could
    * not be called out repeatedly in a short period.
+   * @default { minutes: 5 }
    */
   cooldown: DurationObject
 }
