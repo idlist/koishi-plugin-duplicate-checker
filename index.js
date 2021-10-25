@@ -240,9 +240,11 @@ module.exports.apply = (ctx, config) => {
   ctx.command('dplch.now', '查看出警器统计')
     .action(({ session }) => {
       const cid = `${session.platform}:${session.channelId}`
+
       if (!MessageRecords[cid]) initMessageRecord(cid)
       const record = MessageRecords[cid]
       const recordNumber = record.image.length + record.text.length
+
       return '现在记录库中' +
         (recordNumber ? `有 ${recordNumber} 条记录，` : '没有记录，') +
         `自 ${formatTimestamp(record.startSince)} 起` +
@@ -253,6 +255,7 @@ module.exports.apply = (ctx, config) => {
     .action(async ({ session }) => {
       session.send('请在 5 秒内输入 y(es) 以确认重置当前记录。输入其他内容将被视为中断。')
       const twoFactor = await session.prompt(1000 * 5)
+
       if (['y', 'yes'].includes(twoFactor.toLowerCase())) {
         const cid = `${session.platform}:${session.channelId}`
         initMessageRecord(cid)
