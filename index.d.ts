@@ -14,6 +14,8 @@ export type RecordType = Record<string, {
   text: RecordType[]
   image: RecordType[]
   link: RecordType[]
+  startSince: number
+  count: number
 }>
 
 export interface DurationObject {
@@ -37,6 +39,12 @@ export interface ConfigObject {
    * @default false
    */
   calloutSelf?: boolean
+  /**
+   * 最大出警次数。能够减少对于表情包的出警频率。
+   *
+   * @default 10
+   */
+  maxCallout?: number
   /**
    * 被记录的文字信息的最小长度。只有长于此长度的文字信息才会被记录。
    *

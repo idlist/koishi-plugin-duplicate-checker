@@ -1,5 +1,5 @@
 const { s, t } = require('koishi')
-const axios = require('axios')
+const axios = require('axios').default
 const probe = require('probe-image-size')
 const imghash = require('imghash')
 const levenshtein = require('js-levenshtein')
@@ -82,9 +82,7 @@ const convertDurationObject = (durationObject) => {
  * @param {number} digits
  * @returnss {string}
  */
-const paddingZero = (number, digits) => {
-  return number.toString().padStart(digits, '0')
-}
+const paddingZero = (number, digits) => number.toString().padStart(digits, '0')
 
 /**
  * @param {number} timestamp
@@ -103,6 +101,19 @@ const formatTimestamp = (timestamp) => {
   return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`
 }
 
+/**
+ * @param {string} cid
+ */
+const initMessageRecord = cid => {
+  MessageRecords[cid] = {
+    text: [],
+    image: [],
+    link: [],
+    count: 0,
+    startSince: Date.now()
+  }
+}
+
 module.exports.name = 'duplicate-checker'
 
 /**
@@ -112,6 +123,7 @@ module.exports.name = 'duplicate-checker'
 module.exports.apply = (ctx, config) => {
   config = {
     calloutSelf: false,
+    maxCallout: 10,
     minTextLength: 128,
     minWidth: 512,
     minHeight: 512,
@@ -125,17 +137,13 @@ module.exports.apply = (ctx, config) => {
   const cleanExpireInterval = convertDurationObject(config.cleanExpireInterval)
   const cooldown = convertDurationObject(config.cooldown)
 
+  const logger = ctx.logger('duplicate-checker')
+
   ctx.middleware(async (session, next) => {
     const fragments = s.parse(session.content)
-    const channel = `${session.platform}:${session.channelId}`
-    if (!(channel in MessageRecords)) {
-      MessageRecords[channel] = {
-        text: [],
-        image: [],
-        link: []
-      }
-    }
-    const recordsCategory = MessageRecords[channel]
+    const cid = `${session.platform}:${session.channelId}`
+    if (!MessageRecords[cid]) initMessageRecord(cid)
+    const recordsCategory = MessageRecords[cid]
 
     for (const fragment of fragments) {
       /**
@@ -171,7 +179,8 @@ module.exports.apply = (ctx, config) => {
             records = recordsCategory.image
             processed = await imghash.hash(imageBuffer, 32)
           } catch (err) {
-            console.log(err)
+            logger.warn('Something wrong happened during the request of the image')
+            logger.warn(err)
             continue
           }
           break
@@ -198,9 +207,11 @@ module.exports.apply = (ctx, config) => {
         record.count++
         record.expire = session.timestamp + expireDuration
 
+        if (record.count >= config.maxCallout) continue
         if (record.cooldown && record.cooldown >= session.timestamp) continue
 
         record.cooldown = session.timestamp + cooldown
+        record.count++
 
         // 'callout': '出警！{0} 又在发火星{1}了！\n这{2}{1}由 {3} [{4}] 于 {5} 发过，已经被发过了 {6} 次！'
         session.send(t('duplicate-checker.callout',
@@ -223,6 +234,31 @@ module.exports.apply = (ctx, config) => {
 
     return next()
   })
+
+  ctx.command('dplch', '查看出警器', { hidden: true })
+
+  ctx.command('dplch.now', '查看出警器统计')
+    .action(({ session }) => {
+      const cid = `${session.platform}:${session.channelId}`
+      if (!MessageRecords[cid]) initMessageRecord(cid)
+      const record = MessageRecords[cid]
+      const recordNumber = record.image.length + record.text.length
+      return '现在记录库中' +
+        (recordNumber ? `有 ${recordNumber} 条记录，` : '没有') +
+        `自 ${formatTimestamp(record.startSince)} 起` +
+        (record.count ? `已经出警过了 ${record.count} 次。` : '还没有出警过。')
+    })
+
+  ctx.command('dplch.reset', '重置当前记录', { authority: 4 })
+    .action(async ({ session }) => {
+      session.send('请在 5 秒内输入 y(es) 以确认重置当前记录。输入其他内容将被视为中断。')
+      const twoFactor = await session.prompt(1000 * 5)
+      if (['y', 'yes'].includes(twoFactor.toLowerCase())) {
+        const cid = `${session.platform}:${session.channelId}`
+        initMessageRecord(cid)
+        return '出警器记录已重置。'
+      }
+    })
 
   const cleanExpire = () => {
     for (const channel in MessageRecords) {
