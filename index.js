@@ -244,7 +244,7 @@ module.exports.apply = (ctx, config) => {
       const record = MessageRecords[cid]
       const recordNumber = record.image.length + record.text.length
       return '现在记录库中' +
-        (recordNumber ? `有 ${recordNumber} 条记录，` : '没有') +
+        (recordNumber ? `有 ${recordNumber} 条记录，` : '没有记录，') +
         `自 ${formatTimestamp(record.startSince)} 起` +
         (record.count ? `已经出警过了 ${record.count} 次。` : '还没有出警过。')
     })
