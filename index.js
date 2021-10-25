@@ -48,6 +48,7 @@ const convertDurationObject = (durationObject) => {
 
   for (const unit in durationObject) {
     switch (unit) {
+      case 'ms':
       case 'millisecond':
       case 'milliseconds':
         duration += durationObject[unit]
@@ -82,13 +83,7 @@ const convertDurationObject = (durationObject) => {
  * @returnss {string}
  */
 const paddingZero = (number, digits) => {
-  let result = number.toString()
-
-  while (result.length < digits) {
-    result = '0' + result
-  }
-
-  return result
+  return number.toString().padStart(digits, '0')
 }
 
 /**
@@ -117,7 +112,7 @@ module.exports.name = 'duplicate-checker'
 module.exports.apply = (ctx, config) => {
   config = {
     calloutSelf: false,
-    minTextLength: 64,
+    minTextLength: 128,
     minWidth: 512,
     minHeight: 512,
     expireDuration: { days: 3 },

@@ -17,6 +17,7 @@ export type RecordType = Record<string, {
 }>
 
 export interface DurationObject {
+  ms?: number
   millisecond?: number
   milliseconds?: number
   second: number
@@ -31,48 +32,49 @@ export interface DurationObject {
 
 export interface ConfigObject {
   /**
-   * Whether the bot should call out the original sender of the image.
+   * 消息发送者自己发送了两次的情况下是否需要出警。
    *
    * @default false
    */
   calloutSelf?: boolean
   /**
-   * Minimum length for a text message to be recorded.
+   * 被记录的文字信息的最小长度。只有长于此长度的文字信息才会被记录。
    *
-   * @default 64
+   * @default 128
    */
   minTextLength?: number
   /**
-   * Minimum width for an image to be recorded in px.
+   * 被记录的图片信息的最小宽度，单位为像素（px）。
    *
-   * Too small pictures are considered as stickers.
+   * 太小的图很可能是表情包。
    *
    * @default 512
    */
   minWidth?: number
   /**
-   * Minimum height for an image to be recorded.
+   * 被记录的图片信息的最小高度，单位为像素（px）。
    *
-   * Too small pictures are considered as stickers.
+   * 太小的图很可能是表情包。
    *
    * @default 512
    */
   minHeight?: number
   /**
-   * Duration for a record to be cleaned from the record list.
+   * 消息记录的储存时长。
    *
    * @default { days: 3 }
    */
   expireDuration?: DurationObject
   /**
-   * Interval of cleaning the expired records.
+   * 清理过期消息的间隔。
    *
    * @default { minutes: 10 }
    */
   cleanExpireInterval?: DurationObject
   /**
-   * Cooldown after the first callout so that a duplicated message could
-   * not be called out repeatedly in a short period.
+   * 对同一条火星消息出警的冷却时间。第一次出警不受此配置项影响。
+   *
+   * 也能用于减少对表情包的出警频率，因为并不能分辨出表情包和火星图片。
    *
    * @default { minutes: 5 }
    */
