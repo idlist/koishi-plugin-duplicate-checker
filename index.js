@@ -143,7 +143,7 @@ module.exports.apply = (ctx, config) => {
     const fragments = s.parse(session.content)
     const cid = `${session.platform}:${session.channelId}`
     if (!MessageRecords[cid]) initMessageRecord(cid)
-    const recordsCategory = MessageRecords[cid]
+    const channelRecord = MessageRecords[cid]
 
     for (const fragment of fragments) {
       /**
@@ -163,7 +163,7 @@ module.exports.apply = (ctx, config) => {
           if (fragment.data.content.length < config.minTextLength) continue
 
           type = 'text'
-          records = recordsCategory.text
+          records = channelRecord.text
           processed = fragment.data.content
           break
         case 'image':
@@ -176,7 +176,7 @@ module.exports.apply = (ctx, config) => {
             if (!['jpg', 'png', 'bmp', 'webp', 'tiff'].includes(info.type)) continue
 
             type = 'image'
-            records = recordsCategory.image
+            records = channelRecord.image
             processed = await imghash.hash(imageBuffer, 32)
           } catch (err) {
             logger.warn('Something wrong happened during the request of the image')
@@ -211,7 +211,7 @@ module.exports.apply = (ctx, config) => {
         if (record.cooldown && record.cooldown >= session.timestamp) continue
 
         record.cooldown = session.timestamp + cooldown
-        record.count++
+        channelRecord.count++
 
         // 'callout': '出警！{0} 又在发火星{1}了！\n这{2}{1}由 {3} [{4}] 于 {5} 发过，已经被发过了 {6} 次！'
         session.send(t('duplicate-checker.callout',
@@ -262,9 +262,9 @@ module.exports.apply = (ctx, config) => {
 
   const cleanExpire = () => {
     for (const channel in MessageRecords) {
-      const recordsCategory = MessageRecords[channel]
-      for (const type in recordsCategory) {
-        recordsCategory[type] = recordsCategory[type].filter(record => {
+      const channelRecord = MessageRecords[channel]
+      for (const type in channelRecord) {
+        channelRecord[type] = channelRecord[type].filter(record => {
           return record.expire > Date.now()
         })
       }
