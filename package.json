@@ -17,9 +17,7 @@
   },
   "homepage": "https://github.com/idlist/koishi-plugin-duplicate-checker#readme",
   "main": "index.js",
-  "scripts": {
-    "test": ""
-  },
+  "scripts": {},
   "dependencies": {
     "axios": "^0.21.0",
     "probe-image-size": "^7.0.0",

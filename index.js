@@ -142,7 +142,7 @@ module.exports.apply = (ctx, config) => {
   ctx.middleware(async (session, next) => {
     const fragments = s.parse(session.content)
     const cid = `${session.platform}:${session.channelId}`
-    if (!MessageRecords[cid]) initMessageRecord(cid)
+    if (!(cid in MessageRecords)) initMessageRecord(cid)
     const channelRecord = MessageRecords[cid]
 
     for (const fragment of fragments) {
@@ -241,7 +241,7 @@ module.exports.apply = (ctx, config) => {
     .action(({ session }) => {
       const cid = `${session.platform}:${session.channelId}`
 
-      if (!MessageRecords[cid]) initMessageRecord(cid)
+      if (!(cid in MessageRecords)) initMessageRecord(cid)
       const record = MessageRecords[cid]
       const recordNumber = record.image.length + record.text.length
 
@@ -266,7 +266,7 @@ module.exports.apply = (ctx, config) => {
   const cleanExpire = () => {
     for (const channel in MessageRecords) {
       const channelRecord = MessageRecords[channel]
-      for (const type in channelRecord) {
+      for (const type in ['text', 'image', 'link']) {
         channelRecord[type] = channelRecord[type].filter(record => {
           return record.expire > Date.now()
         })
