@@ -40,7 +40,7 @@ export interface ConfigObject {
    */
   calloutSelf?: boolean
   /**
-   * 最大出警次数。能够减少对于表情包的出警频率。
+   * 最大出警次数。能够用于减少对于表情包的出警频率。
    *
    * @default 10
    */
@@ -68,7 +68,7 @@ export interface ConfigObject {
    */
   minHeight?: number
   /**
-   * 消息记录的储存时长。
+   * 被记录的消息的储存时长。
    *
    * @default { days: 3 }
    */
