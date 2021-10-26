@@ -266,7 +266,7 @@ module.exports.apply = (ctx, config) => {
   const cleanExpire = () => {
     for (const channel in MessageRecords) {
       const channelRecord = MessageRecords[channel]
-      for (const type in ['text', 'image', 'link']) {
+      for (const type of ['text', 'image', 'link']) {
         channelRecord[type] = channelRecord[type].filter(record => {
           return record.expire > Date.now()
         })
