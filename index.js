@@ -80,7 +80,7 @@ const convertDurationObject = (durationObject) => {
 /**
  * @param {number} number
  * @param {number} digits
- * @returnss {string}
+ * @returns {string}
  */
 const paddingZero = (number, digits) => number.toString().padStart(digits, '0')
 
