@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-duplicate-checker",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "Check duplicated messages and images in group chats.",
   "author": "i'DLisT <me@idl.ist> (https://idl.ist/)",
   "license": "MIT",
@@ -20,11 +20,11 @@
   "scripts": {},
   "dependencies": {
     "axios": "^0.24.0",
-    "probe-image-size": "^7.0.0",
+    "image-size": "^1.0.0",
     "imghash": "^0.0.9",
     "js-levenshtein": "^1.0.0"
   },
   "peerDependencies": {
-    "koishi-core": ">=3"
+    "koishi": "^4.0.0"
   }
 }

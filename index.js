@@ -1,6 +1,6 @@
 const { s, t } = require('koishi')
 const axios = require('axios').default
-const probe = require('probe-image-size')
+const sizeOf = require('image-size')
 const imghash = require('imghash')
 const levenshtein = require('js-levenshtein')
 
@@ -17,7 +17,7 @@ t.set('duplicate-checker', {
 /**
  * @type {import('./index').RecordType}
  */
-let MessageRecords = {}
+const MessageRecords = {}
 
 /**
  * @param {import('koishi').Session} session
@@ -89,7 +89,7 @@ const paddingZero = (number, digits) => number.toString().padStart(digits, '0')
  * @returns {string}
  */
 const formatTimestamp = (timestamp) => {
-  let date = new Date(timestamp)
+  const date = new Date(timestamp)
 
   const year = paddingZero(date.getFullYear(), 4)
   const month = paddingZero(date.getMonth() + 1, 2)
@@ -108,7 +108,6 @@ const initMessageRecord = cid => {
   MessageRecords[cid] = {
     text: [],
     image: [],
-    link: [],
     count: 0,
     startSince: Date.now()
   }
@@ -141,13 +140,13 @@ module.exports.apply = (ctx, config) => {
 
   ctx.middleware(async (session, next) => {
     const fragments = s.parse(session.content)
-    const cid = `${session.platform}:${session.channelId}`
+    const cid = session.cid
     if (!(cid in MessageRecords)) initMessageRecord(cid)
     const channelRecord = MessageRecords[cid]
 
     for (const fragment of fragments) {
       /**
-       * @type {'text' | 'image' | 'link'}
+       * @type {'text' | 'image'}
        */
       let type
 
@@ -171,7 +170,7 @@ module.exports.apply = (ctx, config) => {
             const { data: imageBuffer } = await axios.get(fragment.data.url, {
               responseType: 'arraybuffer'
             })
-            const info = probe.sync(imageBuffer)
+            const info = sizeOf(imageBuffer)
             if (info.width < config.minWidth && info.height < config.minHeight) continue
             if (!['jpg', 'png', 'bmp', 'webp', 'tiff'].includes(info.type)) continue
 
@@ -276,11 +275,11 @@ module.exports.apply = (ctx, config) => {
 
   let cleanExpireTimer
 
-  ctx.on('connect', () => {
+  ctx.on('ready', () => {
     cleanExpireTimer = setInterval(cleanExpire, cleanExpireInterval)
   })
 
-  ctx.on('disconnect', () => {
+  ctx.on('dispose', () => {
     clearInterval(cleanExpireTimer)
   })
 }
