@@ -9,8 +9,6 @@ t.set('duplicate-checker', {
   'text-quantifier': '条',
   'image': '图',
   'image-quantifier': '张',
-  'link': '图',
-  'link-quantifier': '张',
   'callout': '出警！{0} 又在发火星{1}了！\n这{2}{1}由 {3} [{4}] 于 {5} 发过，已经被发过了 {6} 次！'
 })
 
@@ -192,7 +190,6 @@ module.exports.apply = (ctx, config) => {
       for (const record of records) {
         switch (type) {
           case 'text':
-          case 'link':
             if (distanceRatio(record.content, processed) >= 0.1) continue
             break
           case 'image':
@@ -265,7 +262,7 @@ module.exports.apply = (ctx, config) => {
   const cleanExpire = () => {
     for (const channel in MessageRecords) {
       const channelRecord = MessageRecords[channel]
-      for (const type of ['text', 'image', 'link']) {
+      for (const type of ['text', 'image']) {
         channelRecord[type] = channelRecord[type].filter(record => {
           return record.expire > Date.now()
         })
