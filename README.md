@@ -11,7 +11,7 @@
 npm i koishi-plugin-duplicate-checker
 ```
 
-然后参照 [安装插件](https://koishi.js.org/guide/context.html#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6) 继续安装。
+然后在配置文件或入口文件中将插件添加至你的机器人中。
 
 ## 使用方法
 
@@ -68,8 +68,10 @@ interface DurationObject {
 
 ## 更新记录
 
+### v1.0.1
+
+删除了链接分类（实际上根本就没有实装过），修复了清理记录的时候出错的问题。
+
 ### v1.0.0
 
 对 v4 做了一个很简陋的适配。如果仍然需要用 v3 请使用 v0.2 版本。
-
-我觉得应该有 bug，但我懒得发 alpha 了_(:3
