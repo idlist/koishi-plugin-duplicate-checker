@@ -4,7 +4,6 @@ export interface RecordDetail {
   content: string,
   count: number,
   id: string,
-  name: string,
   timestamp: number,
   expire: number,
   cooldown: number | undefined
@@ -13,7 +12,6 @@ export interface RecordDetail {
 export type RecordType = Record<string, {
   text: RecordType[]
   image: RecordType[]
-  link: RecordType[]
   startSince: number
   count: number
 }>
