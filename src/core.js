@@ -43,8 +43,9 @@ module.exports = (ctx, config) => {
 
     let shouldCallout = false, calloutHeader = ''
     const calloutDetail = []
+    let nthImage = 0
 
-    for (const [i, fragment] of fragments.entries()) {
+    for (const fragment of fragments) {
       /**
        * @type {'text' | 'image'}
        */
@@ -77,10 +78,10 @@ module.exports = (ctx, config) => {
             type = 'image'
             records = channelRecord.image
             processed = await phash(imageBuffer, 16)
-            console.log(processed)
-          } catch (err) {
+            nthImage++
+          } catch (error) {
             logger.warn('Something wrong happened during the request of the image')
-            logger.warn(err)
+            logger.warn(error)
             continue
           }
           break
@@ -96,12 +97,11 @@ module.exports = (ctx, config) => {
             if (distanceRatio(record.content, processed) >= 0.1) continue
             break
           case 'image':
-            if (distanceRatio(record.content, processed) >= 0.07) continue
+            if (distanceRatio(record.content, processed) >= 0.1) continue
             break
         }
 
         duplicateFound = true
-        shouldCallout = true
         if (!config.calloutSelf && record.id == session.author.userId) continue
 
         record.count++
@@ -110,32 +110,31 @@ module.exports = (ctx, config) => {
         if (record.count >= config.maxCallout) continue
         if (record.cooldown && record.cooldown >= session.timestamp) continue
 
-        record.cooldown = session.timestamp + cooldown
+        record.cooldown = session.timestamp + cooldown - 1
         channelRecord.count++
 
-        const name = session.author.nickname || session.author.username
         const sender = await session.bot.getGuildMember(session.guildId, record.id)
         const senderName = sender
           ? (sender.nickname || sender.username)
           : t('duplicate-checker.user-not-found')
 
-        if (!shouldCallout) {
+        if (!shouldCallout && duplicateFound) {
+          shouldCallout = true
+          const name = session.author.nickname || session.author.username
+
           // 'callout': '出警！{0} 又在发火星{1}了！'
           calloutHeader = t('duplicate-checker.callout',
             name,
-            t(`duplicate-checker.${type}`),
-            t(`duplicate-checker.${type}-quantifier`),
-            senderName,
-            record.id,
-            formatTimestamp(record.timestamp),
-            record.count
+            t(`duplicate-checker.${type}`)
           )
         }
 
         calloutDetail.push(
-          // 'callout-detail': '第 {0} {1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！'
+          // 'callout-detail': '{0}{1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！'
           t('duplicate-checker.callout-detail',
-            i + 1,
+            type == 'image'
+              ? t('duplicate-checker.callout-ordinal', nthImage)
+              : t('duplicate-checker.callout-pronoun'),
             t(`duplicate-checker.${type}-quantifier`),
             t(`duplicate-checker.${type}`),
             `${senderName} (${record.id})`,
@@ -143,6 +142,8 @@ module.exports = (ctx, config) => {
             record.count
           )
         )
+
+        break
       }
 
       if (!duplicateFound) {
@@ -158,7 +159,6 @@ module.exports = (ctx, config) => {
     }
 
     if (shouldCallout) session.send(calloutHeader + calloutDetail.join('\n'))
-
     return next()
   })
 
@@ -215,6 +215,7 @@ module.exports = (ctx, config) => {
       logger.debug('No cache file found or the file is broken, use empty data.')
       MessageRecords = {}
     }
+    cleanExpire()
     cleanExpireTimer = setInterval(cleanExpire, cleanExpireInterval)
   })
 

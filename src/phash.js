@@ -21,6 +21,8 @@ const initSqrt = size => {
   return sqrts
 }
 
+const sqrt = initSqrt(SAMPLE_SIZE)
+
 /**
  * @param {number} size
  * @returns {number[][]}
@@ -36,7 +38,6 @@ const initCos = size => {
   return cosines
 }
 
-const sqrt = initSqrt(SAMPLE_SIZE)
 const cos = initCos(SAMPLE_SIZE)
 
 /**
@@ -84,12 +85,8 @@ const phash = async (image, size = LOW_SIZE) => {
     }
   }
 
-  console.log(s)
-
   // Apply 2D DCT II
   const dct = applyDCT(s, SAMPLE_SIZE)
-
-  console.log(dct)
 
   // Get AVG on high frequencies.
   let totalSum = 0

@@ -8,7 +8,9 @@ t.set('duplicate-checker', {
   'image-quantifier': '张',
 
   'callout': '出警！{0} 又在发火星{1}了！\n',
-  'callout-detail': '第 {0} {1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！',
+  'callout-pronoun': '这',
+  'callout-ordinal': '第 {0} ',
+  'callout-detail': '{0}{1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！',
 
   'user-not-found': '[找不到该用户]',
 
@@ -26,7 +28,6 @@ t.set('duplicate-checker', {
   'reset-success': '出警器记录已重置。'
 })
 
-
 module.exports.name = 'duplicate-checker'
 
 /**
@@ -41,7 +42,7 @@ module.exports.apply = (ctx, config) => {
     minWidth: 512,
     minHeight: 512,
     expireDuration: { days: 3 },
-    cleanExpireInterval: { minutes: 10 },
+    cleanExpireInterval: { hours: 1 },
     cooldown: { minutes: 5 },
     ...config
   }
