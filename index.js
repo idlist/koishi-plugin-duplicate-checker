@@ -25,7 +25,7 @@ t.set('duplicate-checker', {
 
   'reset': '重置当前记录',
   'reset-prompt': '请在 5 秒内输入 y(es) 以确认重置当前记录。输入其他内容将被视为中断。',
-  'reset-success': '出警器记录已重置。'
+  'reset-success': '出警器记录已重置。',
 })
 
 module.exports.name = 'duplicate-checker'
@@ -44,7 +44,7 @@ module.exports.apply = (ctx, config) => {
     expireDuration: { days: 3 },
     cleanExpireInterval: { hours: 1 },
     cooldown: { minutes: 5 },
-    ...config
+    ...config,
   }
 
   ctx.plugin(core, config)

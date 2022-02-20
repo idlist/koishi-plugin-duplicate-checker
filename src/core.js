@@ -20,7 +20,7 @@ const initMessageRecord = cid => {
     text: [],
     image: [],
     count: 0,
-    startSince: Date.now()
+    startSince: Date.now(),
   }
 }
 
@@ -69,7 +69,7 @@ module.exports = (ctx, config) => {
         case 'image':
           try {
             const imageBuffer = await ctx.http.get(fragment.data.url, {
-              responseType: 'arraybuffer'
+              responseType: 'arraybuffer',
             })
             const { width, height, type: imageType } = await imageSize(imageBuffer)
             if (width < config.minWidth && height < config.minHeight) continue
@@ -122,15 +122,15 @@ module.exports = (ctx, config) => {
           shouldCallout = true
           const name = session.author.nickname || session.author.username
 
-          // 'callout': '出警！{0} 又在发火星{1}了！'
+          // 出警！{0} 又在发火星{1}了！
           calloutHeader = t('duplicate-checker.callout',
             name,
-            t(`duplicate-checker.${type}`)
+            t(`duplicate-checker.${type}`),
           )
         }
 
         calloutDetail.push(
-          // 'callout-detail': '{0}{1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！'
+          // {0}{1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！
           t('duplicate-checker.callout-detail',
             type == 'image'
               ? t('duplicate-checker.callout-ordinal', nthImage)
@@ -139,8 +139,8 @@ module.exports = (ctx, config) => {
             t(`duplicate-checker.${type}`),
             `${senderName} (${record.id})`,
             formatTimestamp(record.timestamp),
-            record.count
-          )
+            record.count,
+          ),
         )
 
         break
@@ -153,7 +153,7 @@ module.exports = (ctx, config) => {
           id: session.userId,
           timestamp: session.timestamp,
           expire: session.timestamp + expireDuration,
-          cooldown: undefined
+          cooldown: undefined,
         })
       }
     }
@@ -179,7 +179,7 @@ module.exports = (ctx, config) => {
         formatTimestamp(record.startSince),
         record.count
           ? t('duplicate-checker.now-result-callout', record.count)
-          : t('duplicate-checker.now-result-no-callout')
+          : t('duplicate-checker.now-result-no-callout'),
       )
     })
 
