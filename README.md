@@ -68,6 +68,10 @@ interface DurationObject {
 
 ## 更新记录
 
+### v1.1.1
+
+- 修复了一个 LTGM 报的逻辑错误。
+
 ### v1.1.0
 
 - 更换了依赖链（换到了 [sharp](https://sharp.pixelplumbing.com/)），总体依赖的数量和体积增加，好处是扔掉了一些远古依赖。

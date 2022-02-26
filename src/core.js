@@ -118,7 +118,7 @@ module.exports = (ctx, config) => {
           ? (sender.nickname || sender.username)
           : t('duplicate-checker.user-not-found')
 
-        if (!shouldCallout && duplicateFound) {
+        if (!shouldCallout) {
           shouldCallout = true
           const name = session.author.nickname || session.author.username
 
