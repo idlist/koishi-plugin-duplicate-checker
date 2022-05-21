@@ -68,13 +68,16 @@ interface DurationObject {
 
 ## 更新记录
 
+<details>
+<summary><b>v1.0</b> （用于 Koishi v4）</summary>
+
 ### v1.1.1
 
-- 修复了一个 LTGM 报的逻辑错误。
+- 修复了一个逻辑错误。
 
 ### v1.1.0
 
-- 更换了依赖链（换到了 [sharp](https://sharp.pixelplumbing.com/)），总体依赖的数量和体积增加，好处是扔掉了一些远古依赖。
+- 更换了依赖链（换到了 [sharp](https://sharp.pixelplumbing.com/)），导致依赖的数量和体积增加了，好处是扔掉了一些远古依赖。
 - 在终止机器人时，插件会将当前的记录写入本地 JSON 文件，在下次启动时将读取该文件以实现重启不丢数据的功能。
 
 ### v1.0.1
@@ -83,4 +86,6 @@ interface DurationObject {
 
 ### v1.0.0
 
-- 对 v4 做了一个很简陋的适配。如果仍然需要用 v3 请使用 v0.2 版本。
+- 对 v4 做了一个很简陋的适配。如果仍然需要在 v3 中使用此插件，请使用 v0.2 版本。
+
+</details>

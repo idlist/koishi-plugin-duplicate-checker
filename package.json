@@ -16,6 +16,11 @@
     "url": "https://github.com/idlist/koishi-plugin-duplicate-checker/issues"
   },
   "homepage": "https://github.com/idlist/koishi-plugin-duplicate-checker#readme",
+  "files": [
+    "src",
+    "index.js",
+    "index.d.ts"
+  ],
   "main": "index.js",
   "scripts": {},
   "dependencies": {
