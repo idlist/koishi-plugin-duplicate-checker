@@ -13,6 +13,10 @@ npm i koishi-plugin-duplicate-checker
 
 然后在配置文件或入口文件中将插件添加至你的机器人中。
 
+### 关于安装时出现“找不到 Python”之类的一系列问题
+
+请参照 [sharp 的文档](https://sharp.pixelplumbing.com/install#chinese-mirror) 设置镜像源。理论上而言，安装此插件不需要事先安装 Python。
+
 ## 使用方法
 
 这个插件的主要功能为纯被动触发，配置后即可使用。
@@ -70,6 +74,10 @@ interface DurationObject {
 
 <details>
 <summary><b>v1.0</b> （用于 Koishi v4）</summary>
+
+### v1.1.2
+
+- 将 sharp 升级到 v0.30.6（低于 v0.30.4 （含）的 sharp 报有安全性问题）。
 
 ### v1.1.1
 
