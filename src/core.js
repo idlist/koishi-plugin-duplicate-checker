@@ -1,6 +1,6 @@
 const { readFile, writeFile } = require('fs').promises
 const { resolve } = require('path')
-const { s, t } = require('koishi')
+const { segment } = require('koishi')
 const imageSize = require('image-size')
 const phash = require('./phash')
 const { distanceRatio, convertDurationObject, formatTimestamp } = require('./utils')
@@ -36,7 +36,7 @@ module.exports = (ctx, config) => {
   const logger = ctx.logger('duplicate-checker')
 
   ctx.middleware(async (session, next) => {
-    const fragments = s.parse(session.content)
+    const fragments = segment.parse(session.content)
     const cid = session.cid
     if (!(cid in MessageRecords)) initMessageRecord(cid)
     const channelRecord = MessageRecords[cid]
@@ -116,31 +116,21 @@ module.exports = (ctx, config) => {
         const sender = await session.bot.getGuildMember(session.guildId, record.id)
         const senderName = sender
           ? (sender.nickname || sender.username)
-          : t('duplicate-checker.user-not-found')
+          : '[找不到该用户]'
 
         if (!shouldCallout) {
           shouldCallout = true
           const name = session.author.nickname || session.author.username
+          const q = type == 'image' ? '图' : '消息'
 
-          // 出警！{0} 又在发火星{1}了！
-          calloutHeader = t('duplicate-checker.callout',
-            name,
-            t(`duplicate-checker.${type}`),
-          )
+          calloutHeader = `出警！${name} 又在发火星${q}了！`
         }
 
         calloutDetail.push(
-          // {0}{1}{2}由 {3} 于 {4} 发过，已经被发过了 {5} 次！
-          t('duplicate-checker.callout-detail',
-            type == 'image'
-              ? t('duplicate-checker.callout-ordinal', nthImage)
-              : t('duplicate-checker.callout-pronoun'),
-            t(`duplicate-checker.${type}-quantifier`),
-            t(`duplicate-checker.${type}`),
-            `${senderName} (${record.id})`,
-            formatTimestamp(record.timestamp),
-            record.count,
-          ),
+          (type == 'image' ? `第 ${nthImage} 张图` : '这条消息') +
+          `由 ${senderName} (${record.id})` +
+          `于 ${formatTimestamp(record.timestamp)} 发过，` +
+          `已经被发过了 ${record.count} 次！`,
         )
 
         break
@@ -162,9 +152,9 @@ module.exports = (ctx, config) => {
     return next()
   })
 
-  ctx.command('dplch', t('duplicate-checker.desc'), { hidden: true })
+  ctx.command('dplch', '查看出警器', { hidden: true })
 
-  ctx.command('dplch.now', t('duplicate-checker.now'))
+  ctx.command('dplch.now', '查看出警器统计')
     .action(({ session }) => {
       const cid = session.cid
 
@@ -172,26 +162,21 @@ module.exports = (ctx, config) => {
       const record = MessageRecords[cid]
       const recordNumber = record.image.length + record.text.length
 
-      return t('duplicate-checker.now-result',
-        recordNumber
-          ? t('duplicate-checker.now-result-record', recordNumber)
-          : t('duplicate-checker.now-result-no-record'),
-        formatTimestamp(record.startSince),
-        record.count
-          ? t('duplicate-checker.now-result-callout', record.count)
-          : t('duplicate-checker.now-result-no-callout'),
-      )
+      return '现在记录库中' +
+        (recordNumber ? `有 ${recordNumber} 条记录` : '没有记录') +
+        `，自 ${formatTimestamp(record.startSince)} 起` +
+        (record.count ? `已经出警过了 ${record.count} 次` : '还没有出警过')
     })
 
-  ctx.command('dplch.reset', t('duplicate-checker.reset'), { authority: 4 })
+  ctx.command('dplch.reset', '重制出警记录库', { authority: 4 })
     .action(async ({ session }) => {
-      session.send(t('duplicate-checker.reset-prompt'))
+      session.send('请在 5 秒内输入 y(es) 以确认重置当前记录。输入其他内容将被视为中断。')
       const confirm = await session.prompt(1000 * 5)
 
       if (['y', 'yes'].includes(confirm.toLowerCase())) {
         const cid = session.cid
         initMessageRecord(cid)
-        return t('duplicate-checker.reset-result')
+        return '出警器记录已重置。'
       }
     })
 
