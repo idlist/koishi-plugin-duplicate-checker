@@ -41,39 +41,33 @@ npm i koishi-plugin-duplicate-checker
 | - | - | - |
 | `calloutSelf` | `false` | 消息发送者自己发送了两次的情况下是否需要出警。 |
 | `maxCallout` | 10 | 最大出警次数。能够用于减少对于表情包的出警频率。 |
+| `cooldown` | 300 | 对同一条火星消息出警的冷却时间，单位为秒。第一次出警不受此配置项影响。 |
+| `calloutText` | `true` | 是否对文字消息进行出警。 |
 | `minTextLength` | 128 | 被记录的文字信息的最小长度。只有长于此长度的文字信息才会被记录。 |
 | `minWidth` | 512 | 被记录的图片信息的最小宽度，单位为像素（px）。 |
 | `minHeight` | 512 | 被记录的图片信息的最小高度，单位为像素（px）。 |
-| `expireDuration` | `{ days: 3 }` **\*1** | 被记录的消息的储存时长。 |
-| `cleanExpireInterval` | `{ minutes: 10 }` **\*1** | 清理过期消息的间隔。 |
-| `cooldown` | `{ minutes: 5 }` **\*1** | 对同一条火星消息出警的冷却时间。第一次出警不受此配置项影响。 |
-
-**\*1** 这些关于时间的配置项遵循以下的格式。
-
-```ts
-interface DurationObject {
-  ms?: number
-  millisecond?: number
-  milliseconds?: number  // 毫秒
-  second: number
-  seconds?: number       // 秒
-  minute?: number
-  minutes?: number       // 分钟
-  hour?: number
-  hours?: number         // 小时
-  day?: number
-  days?: number          // 日
-}
-```
+| `expireDuration` | 259200 | 被记录的消息的储存时长，单位为秒。 |
+| `cleanExpireInterval` | 3600 | 清理过期消息的间隔，单位为秒。 |
 
 ## 已知问题
 
-这个插件完全依赖于内存储存，所以随着运行时间的增长，这个插件占用的内存也会随之增加，而且可能还有内存泄露问题。我自己用的情况是这个插件在加了 20 个群的情况下能吃掉大约 300M 的内存。
+这个插件完全依赖于内存储存，所以随着运行时间的增长，这个插件占用的内存也会随之增加，而且可能还有内存泄露问题。
+
+这个插件使用了一个 JSON 文件 `cache.json`（而不是数据库）在退出 Koishi 时储存消息记录，同时因为作者技术力低下，偶尔会出现储存文件丢失的情况。
 
 ## 更新记录
 
 <details>
-<summary><b>v1.0</b> （用于 Koishi v4）</summary>
+<summary><b>v2</b></summary>
+
+### v2.0.0
+
+- 更换了配置项的格式，现在能在网页控制台设置这些配置了。
+
+</details>
+
+<details>
+<summary><b>v1</b> （用于 Koishi v4）</summary>
 
 ### v1.1.2
 
