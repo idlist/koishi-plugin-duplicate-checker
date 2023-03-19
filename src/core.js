@@ -1,14 +1,14 @@
 const { readFile, writeFile } = require('fs').promises
 const { resolve } = require('path')
-const { segment } = require('koishi')
+const { h } = require('koishi')
 const imageSize = require('image-size')
 const phash = require('./phash')
-const { distanceRatio, convertDurationObject, formatTimestamp } = require('./utils')
+const { distanceRatio, formatTimestamp } = require('./utils')
 
 imageSize.disableFS(true)
 
 /**
- * @type {import('../index').RecordType}
+ * @type {import('./types').RecordType}
  */
 let MessageRecords = {}
 
@@ -29,14 +29,14 @@ const initMessageRecord = cid => {
  * @param {import('../index').ConfigObject} config
  */
 module.exports = (ctx, config) => {
-  const expireDuration = convertDurationObject(config.expireDuration)
-  const cleanExpireInterval = convertDurationObject(config.cleanExpireInterval)
-  const cooldown = convertDurationObject(config.cooldown)
+  const cooldown = config.cooldown
+  const expireDuration = config.expireDuration
+  const cleanExpireInterval = config.cleanExpireInterval
 
   const logger = ctx.logger('duplicate-checker')
 
   ctx.middleware(async (session, next) => {
-    const fragments = segment.parse(session.content)
+    const fragments = h.parse(session.content)
     const cid = session.cid
     if (!(cid in MessageRecords)) initMessageRecord(cid)
     const channelRecord = MessageRecords[cid]
@@ -52,7 +52,7 @@ module.exports = (ctx, config) => {
       let type
 
       /**
-       * @type {import('../index').RecordDetail[]}
+       * @type {import('./types').RecordDetail[]}
        */
       let records
 
@@ -60,15 +60,16 @@ module.exports = (ctx, config) => {
 
       switch (fragment.type) {
         case 'text':
-          if (fragment.data.content.length < config.minTextLength) continue
+          if (!config.callloutText) continue
+          if (fragment.attrs.content.length < config.minTextLength) continue
 
           type = 'text'
           records = channelRecord.text
-          processed = fragment.data.content
+          processed = fragment.attrs.content
           break
         case 'image':
           try {
-            const imageBuffer = await ctx.http.get(fragment.data.url, {
+            const imageBuffer = await ctx.http.get(fragment.attrs.url, {
               responseType: 'arraybuffer',
             })
             const { width, height, type: imageType } = await imageSize(imageBuffer)

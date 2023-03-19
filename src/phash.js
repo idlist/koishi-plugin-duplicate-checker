@@ -13,7 +13,7 @@ const LOW_SIZE = 8
  * @returns {number[]}
  */
 const initSqrt = size => {
-  const sqrts = new Array(size)
+  const sqrts = Array(size)
   for (let i = 1; i < size; i++) {
     sqrts[i] = 1
   }
@@ -28,9 +28,9 @@ const sqrt = initSqrt(SAMPLE_SIZE)
  * @returns {number[][]}
  */
 const initCos = size => {
-  const cosines = new Array(size)
+  const cosines = Array(size)
   for (let k = 0; k < size; k++) {
-    cosines[k] = new Array(size)
+    cosines[k] = Array(size)
     for (let n = 0; n < size; n++) {
       cosines[k][n] = Math.cos(((2 * k + 1) / (2.0 * size)) * n * Math.PI)
     }
@@ -46,9 +46,9 @@ const cos = initCos(SAMPLE_SIZE)
  * @returns {number[][]}
  */
 const applyDCT = (image, size) => {
-  const dct = new Array(size)
+  const dct = Array(size)
   for (let u = 0; u < size; u++) {
-    dct[u] = new Array(size)
+    dct[u] = Array(size)
     for (let v = 0; v < size; v++) {
       let sum = 0
       for (let i = 0; i < size; i++) {

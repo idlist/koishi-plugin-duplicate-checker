@@ -10,44 +10,6 @@ const distanceRatio = (a, b) => {
 }
 
 /**
- * @param {import('../index').DurationObject} durationObject
- * @returns {number}
- */
-const convertDurationObject = (durationObject) => {
-  let duration = 0
-
-  for (const unit in durationObject) {
-    switch (unit) {
-      case 'ms':
-      case 'millisecond':
-      case 'milliseconds':
-        duration += durationObject[unit]
-        break
-      case 'second':
-      case 'seconds':
-        duration += durationObject[unit] * 1000
-        break
-      case 'minute':
-      case 'minutes':
-        duration += durationObject[unit] * 60 * 1000
-        break
-      case 'hour':
-      case 'hours':
-        duration += durationObject[unit] * 60 * 60 * 1000
-        break
-      case 'day':
-      case 'days':
-        duration += durationObject[unit] * 24 * 60 * 60 * 1000
-        break
-      default:
-        continue
-    }
-  }
-
-  return duration
-}
-
-/**
  * @param {number} number
  * @param {number} digits
  * @returns {string}
@@ -72,5 +34,4 @@ const formatTimestamp = (timestamp) => {
 }
 
 module.exports.distanceRatio = distanceRatio
-module.exports.convertDurationObject = convertDurationObject
 module.exports.formatTimestamp = formatTimestamp
