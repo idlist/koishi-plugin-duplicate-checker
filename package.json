@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-duplicate-checker",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Check duplicated messages and images in group chats.",
   "author": "i'DLisT <me@idl.ist> (https://idl.ist/)",
   "license": "MIT",

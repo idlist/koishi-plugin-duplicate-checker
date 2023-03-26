@@ -29,9 +29,9 @@ const initMessageRecord = cid => {
  * @param {import('../index').ConfigObject} config
  */
 module.exports = (ctx, config) => {
-  const cooldown = config.cooldown
-  const expireDuration = config.expireDuration
-  const cleanExpireInterval = config.cleanExpireInterval
+  const cooldown = config.cooldown * 1000
+  const expireDuration = config.expireDuration * 1000
+  const cleanExpireInterval = config.cleanExpireInterval * 1000
 
   const logger = ctx.logger('duplicate-checker')
 

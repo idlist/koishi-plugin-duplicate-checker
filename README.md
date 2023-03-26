@@ -60,6 +60,10 @@ npm i koishi-plugin-duplicate-checker
 <details>
 <summary><b>v2</b></summary>
 
+### v2.0.1
+
+- 修复了一个单位换算错误。
+
 ### v2.0.0
 
 - 更换了配置项的格式，现在能在网页控制台设置这些配置了。
