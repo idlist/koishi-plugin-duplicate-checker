@@ -2,6 +2,7 @@ export interface RecordDetail {
   content: string,
   count: number,
   id: string,
+  sender: string,
   timestamp: number,
   expire: number,
   cooldown: number | undefined

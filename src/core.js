@@ -8,7 +8,7 @@ const { distanceRatio, formatTimestamp } = require('./utils')
 imageSize.disableFS(true)
 
 /**
- * @type {import('./types').RecordType}
+ * @type {import('../types').RecordType}
  */
 let MessageRecords = {}
 
@@ -52,7 +52,7 @@ module.exports = (ctx, config) => {
       let type
 
       /**
-       * @type {import('./types').RecordDetail[]}
+       * @type {import('../types').RecordDetail[]}
        */
       let records
 
@@ -114,14 +114,11 @@ module.exports = (ctx, config) => {
         record.cooldown = session.timestamp + cooldown - 1
         channelRecord.count++
 
-        const sender = await session.bot.getGuildMember(session.guildId, record.id)
-        const senderName = sender
-          ? (sender.nickname || sender.username)
-          : '[找不到该用户]'
+        const sender = record.sender
 
         if (!shouldCallout) {
           shouldCallout = true
-          const name = session.author.nickname || session.author.username
+          const name = session.username
           const q = type == 'image' ? '图' : '消息'
 
           calloutHeader = `出警！${name} 又在发火星${q}了！`
@@ -129,7 +126,7 @@ module.exports = (ctx, config) => {
 
         calloutDetail.push(
           (type == 'image' ? `第 ${nthImage} 张图` : '这条消息') +
-          `由 ${senderName} (${record.id})` +
+          `由 ${sender} (${record.id})` +
           `于 ${formatTimestamp(record.timestamp)} 发过，` +
           `已经被发过了 ${record.count} 次！`,
         )
@@ -142,6 +139,7 @@ module.exports = (ctx, config) => {
           content: processed,
           count: 0,
           id: session.userId,
+          sender: session.username,
           timestamp: session.timestamp,
           expire: session.timestamp + expireDuration,
           cooldown: undefined,
