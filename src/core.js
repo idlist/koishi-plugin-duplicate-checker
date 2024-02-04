@@ -67,7 +67,7 @@ module.exports = (ctx, config) => {
           records = channelRecord.text
           processed = fragment.attrs.content
           break
-        case 'image':
+        case 'img':
           try {
             const imageBuffer = await ctx.http.get(fragment.attrs.url, {
               responseType: 'arraybuffer',
