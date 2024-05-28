@@ -12,7 +12,7 @@ const LOW_SIZE = 8
  * @param {number} size
  * @returns {number[]}
  */
-const initSqrt = size => {
+const initSqrt = (size) => {
   const sqrts = Array(size)
   for (let i = 1; i < size; i++) {
     sqrts[i] = 1
@@ -27,7 +27,7 @@ const sqrt = initSqrt(SAMPLE_SIZE)
  * @param {number} size
  * @returns {number[][]}
  */
-const initCos = size => {
+const initCos = (size) => {
   const cosines = Array(size)
   for (let k = 0; k < size; k++) {
     cosines[k] = Array(size)

@@ -7,15 +7,13 @@ const { distanceRatio, formatTimestamp } = require('./utils')
 
 imageSize.disableFS(true)
 
-/**
- * @type {import('../types').RecordType}
- */
+/** @type {import('../types').RecordsByChannel} */
 let MessageRecords = {}
 
 /**
  * @param {string} cid
  */
-const initMessageRecord = cid => {
+const initMessageRecord = (cid) => {
   MessageRecords[cid] = {
     text: [],
     image: [],
@@ -46,14 +44,10 @@ module.exports = (ctx, config) => {
     let nthImage = 0
 
     for (const fragment of fragments) {
-      /**
-       * @type {'text' | 'image'}
-       */
+      /** @type {'text' | 'image'} */
       let type
 
-      /**
-       * @type {import('../types').RecordDetail[]}
-       */
+      /** @type {import('../types').RecordDetail[]} */
       let records
 
       let processed
@@ -72,7 +66,7 @@ module.exports = (ctx, config) => {
             const imageBuffer = await ctx.http.get(fragment.attrs.url, {
               responseType: 'arraybuffer',
             })
-            const { width, height, type: imageType } = await imageSize(imageBuffer)
+            const { width, height, type: imageType } = await imageSize(new Uint8Array(imageBuffer))
             if (width < config.minWidth && height < config.minHeight) continue
             if (!['jpg', 'png', 'bmp', 'webp', 'tiff'].includes(imageType)) continue
 
@@ -183,14 +177,20 @@ module.exports = (ctx, config) => {
     for (const channel in MessageRecords) {
       const channelRecord = MessageRecords[channel]
       for (const type of ['text', 'image']) {
-        channelRecord[type] = channelRecord[type].filter(record => {
+        channelRecord[type] = channelRecord[type].filter((record) => {
           return record.expire > Date.now()
         })
       }
     }
   }
 
+  const saveCache = async () => {
+    await writeFile(resolve(__dirname, '../cache.json'), JSON.stringify(MessageRecords))
+    logger.debug('Current in-memory data is written to \'cache.json\'.')
+  }
+
   let cleanExpireTimer
+  let saveCacheTimer
 
   ctx.on('ready', async () => {
     try {
@@ -199,16 +199,15 @@ module.exports = (ctx, config) => {
       logger.debug('No cache file found or the file is broken, use empty data.')
       MessageRecords = {}
     }
+
     cleanExpire()
     cleanExpireTimer = setInterval(cleanExpire, cleanExpireInterval)
+
+    saveCacheTimer = setInterval(saveCache, 60 * 60 * 1000)
   })
 
   ctx.on('dispose', async () => {
     clearInterval(cleanExpireTimer)
-  })
-
-  ctx.on('exit', async () => {
-    await writeFile(resolve(__dirname, '../cache.json'), JSON.stringify(MessageRecords))
-    logger.debug('Current in-memory data is written to \'cache.json\'.')
+    clearInterval(saveCacheTimer)
   })
 }

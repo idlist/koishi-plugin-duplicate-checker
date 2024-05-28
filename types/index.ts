@@ -8,9 +8,11 @@ export interface RecordDetail {
   cooldown: number | undefined
 }
 
-export type RecordType = Record<string, {
-  text: RecordType[]
-  image: RecordType[]
+interface RecordsByType {
+  text: RecordDetail[]
+  image: RecordDetail[]
   startSince: number
   count: number
-}>
+}
+
+export type RecordsByChannel = Record<string, RecordsByType>
